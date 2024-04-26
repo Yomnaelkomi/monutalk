@@ -1,0 +1,50 @@
+name: final5
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.2.5 <4.0.0'
+
+dependencies:
+  accordion: ^2.6.0
+  dio: ^5.4.1
+  firebase_auth: ^4.17.8
+  firebase_core: ^2.27.0
+  firebase_storage: ^11.6.9
+  flutter:
+    sdk: flutter
+  flutter_rating_bar: ^4.0.1
+  get: ^4.6.6
+  google_fonts: ^6.1.0
+  http: ^1.2.0
+  image_picker: ^1.0.7
+  permission_handler: ^11.3.0
+  shared_preferences: ^2.2.3
+  transparent_image: ^2.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+      - assets/images/intropage.jpeg
+      - assets/images/intropage2.jpeg
+      - assets/images/intopage3.jpeg
+      - assets/images/intropage4.jpeg
+      - assets/images/p1.jpeg
+      - assets/images/p2.jpeg
+      - assets/images/p3.jpeg
+      - assets/images/p4.jpeg
+      - assets/images/p5.jpeg
+      - assets/images/p6.jpeg
+      - assets/images/m1.png
+      - assets/images/m2.png
+      - assets/images/m3.png
+      - assets/images/m4.png
+      - assets/images/m5.png
+      - assets/images/intro1.jpeg
+
