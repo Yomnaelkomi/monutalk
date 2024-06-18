@@ -8,25 +8,35 @@ environment:
 
 dependencies:
   accordion: ^2.6.0
+  country_picker: ^2.0.25
+  cupertino_icons: ^1.0.8
   dio: ^5.4.1
   firebase_auth: ^4.17.8
   firebase_core: ^2.27.0
   firebase_storage: ^11.6.9
   flutter:
     sdk: flutter
+  flutter_credit_card: ^4.0.1
   flutter_rating_bar: ^4.0.1
   get: ^4.6.6
+  get_storage: ^2.1.1
   google_fonts: ^6.1.0
   http: ^1.2.0
   image_picker: ^1.0.7
+  intl: ^0.19.0
+  percent_indicator: ^4.2.3
   permission_handler: ^11.3.0
   shared_preferences: ^2.2.3
+  speech_to_text: ^6.6.2
+  ticket_widget: ^1.0.2
   transparent_image: ^2.0.1
+  flutter_tts: ^3.8.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+  
 
 flutter:
   uses-material-design: true
@@ -47,4 +57,13 @@ flutter:
       - assets/images/m4.png
       - assets/images/m5.png
       - assets/images/intro1.jpeg
+      - assets/images/contactImage.png
+      - assets/images/bar_code.jpg
+      - assets/images/bg-dark.png
+      - assets/images/bg-light.png
+      - assets/images/card_bg.png
+      - assets/images/mastercard.png
+      - assets/images/chat (1).png
+      - assets/images/character2.jpeg
+      - assets/images/character1.jpeg
 

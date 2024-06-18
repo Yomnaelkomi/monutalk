@@ -1,17 +1,23 @@
-import 'package:final5/not_used/musuem.dart';
 import 'package:final5/screens/aboutUs.dart';
+import 'package:final5/screens/authentication_screen.dart';
 import 'package:final5/screens/categories.dart';
 import 'package:final5/screens/contactUs.dart';
-import 'package:final5/not_used/favorites_screen.dart';
 import 'package:final5/screens/home_screen2.dart';
+import 'package:final5/screens/my_account.dart';
+import 'package:final5/screens/my_purchases.dart';
+import 'package:final5/screens/recommendation_system_screen.dart';
+import 'package:final5/screens/test.dart';
+import 'package:final5/screens/tickets.dart';
+import 'package:final5/screens/tickets2_screen.dart';
+import 'package:final5/widgets/image_input.dart';
 import 'package:final5/widgets/main_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TabsScreen extends StatefulWidget {
-  const TabsScreen({
-    super.key,
-  });
+  const TabsScreen({super.key, required this.UID});
+  final UID;
 
   @override
   State<TabsScreen> createState() {
@@ -20,14 +26,17 @@ class TabsScreen extends StatefulWidget {
 }
 
 class _TabsScreenState extends State<TabsScreen> {
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   int _selectedPageIndex = 0;
-  
+
   // File? _selectedImage;
 
   void _showInfoMsg(String message) {
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(message)));
+
+    
   }
   // final List<Musuem> _favoriteMusuem = [];
   // void _toggleMusuemFavoriteStatus(Musuem musuem) {
@@ -51,12 +60,14 @@ class _TabsScreenState extends State<TabsScreen> {
       _selectedPageIndex = index;
     });
   }
+ 
 
   void _setScreen(String identifier) async {
-    Navigator.pop(context);
+    
+    Get.back();
     if (identifier == 'home') {
       final result = await Navigator.of(context)
-          .push(MaterialPageRoute(builder: (ctx) => const TabsScreen()));
+          .push(MaterialPageRoute(builder: (ctx) =>  TabsScreen(UID: widget.UID,)));
       print(result);
     }
     // if (identifier == 'favorites') {
@@ -68,10 +79,8 @@ class _TabsScreenState extends State<TabsScreen> {
     //   print(result);
     // }
     if (identifier == 'Musuems') {
-      final result = await Navigator.of(context).push(MaterialPageRoute(
-          builder: (ctx) => Categories(
-               
-              )));
+      final result = await Navigator.of(context)
+          .push(MaterialPageRoute(builder: (ctx) => Categories(UID: widget.UID,)));
       print(result);
     }
     if (identifier == 'Contact Us') {
@@ -84,35 +93,53 @@ class _TabsScreenState extends State<TabsScreen> {
           .push(MaterialPageRoute(builder: (ctx) => const AboutUsScreen()));
       print(result);
     }
+    if (identifier == 'My tickets') {
+      final result = await Navigator.of(context)
+          .push(MaterialPageRoute(builder: (ctx) =>  Ticket2Screen(UID: widget.UID,)));
+      print(result);
+    }
+    if (identifier == 'My Account') {
+      final result = await Navigator.of(context)
+          .push(MaterialPageRoute(builder: (ctx) => MyAccountPage(UID: widget.UID,)));
+      print(result);
+    }
+    if (identifier == 'Camera') {
+      final result = await Navigator.of(context)
+          .push(MaterialPageRoute(builder: (ctx) => Test()));
+      print(result);
+    }
+    if (identifier == 'Recommendations') {
+      final result = await Navigator.of(context)
+          .push(MaterialPageRoute(builder: (ctx) => RecommendationSystemScreen()));
+      print(result);
+    }
+    
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget activePage =const HomeScreen2();
+    Widget activePage =  HomeScreen2(UID: widget.UID,);
     var activePageTitle = 'Monutalk';
     if (_selectedPageIndex == 1) {
-      activePage = Categories()
-      ;
+      activePage = Categories(UID: widget.UID,);
       activePageTitle = 'musuems';
     }
+    
 
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            onPressed: () {
-              FirebaseAuth.instance.signOut();
+      appBar: AppBar(actions: [
+        TextButton(
+            onPressed: () async {
+              final SharedPreferences prefs = await _prefs;
+              prefs.clear();
+              Get.offAll(const AuthenticationScreen());
+              
             },
-            icon: Icon(
-              Icons.exit_to_app,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          )
-        ],
-        // title: Text(activePageTitle,
-        //     style: const TextStyle(
-        //         color: Colors.brown, fontWeight: FontWeight.bold)),
-      ),
+            child: const Text(
+              'logout',
+              style: TextStyle(color: Color.fromARGB(255, 2, 0, 0)),
+            ))
+      ]),
       drawer: MainDrawer(
         onSelectscreen: _setScreen,
       ),
@@ -122,7 +149,8 @@ class _TabsScreenState extends State<TabsScreen> {
         currentIndex: _selectedPageIndex,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-           BottomNavigationBarItem(icon: Icon(Icons.museum), label: 'Musuems'),
+          BottomNavigationBarItem(icon: Icon(Icons.museum), label: 'Musuems'),
+         
         ],
       ),
     );

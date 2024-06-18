@@ -1,5 +1,5 @@
 class ApiEndPoints {
-  static final String baseUrl = 'https://monu-talk-production.up.railway.app/';
+  static const String baseUrl = 'https://monu-talk-production.up.railway.app/';
   static _AuthEndPoints authEndpoints = _AuthEndPoints();
 }
 

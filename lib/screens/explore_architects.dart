@@ -50,7 +50,7 @@ class _ExploreArchState extends State<ExploreArch> {
           //title: const Text('Error'),
           title: const Text('unfortunately'),
           //content: Text('Failed to fetch data: $e'),
-          content: Text('No artifacts in this museum'),
+          content: const Text('No artifacts in this museum'),
           actions: <Widget>[
             TextButton(
               child: const Text('Okay'),

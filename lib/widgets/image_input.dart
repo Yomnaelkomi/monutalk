@@ -63,7 +63,7 @@ class _ImageInputState extends State<ImageInput> {
       )
     });
     Dio()
-        .post('https://5e9a-34-125-177-37.ngrok-free.app/upload',
+        .post('https://84b2-34-83-172-215.ngrok-free.app/upload',
             data: formData)
         .then((response) {
       var jsonResponse = jsonDecode(response.toString());
@@ -105,105 +105,158 @@ class _ImageInputState extends State<ImageInput> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: ListView(children: [
-        Container(
-          margin: const EdgeInsets.all(25),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                      onPressed: _takePicture,
-                      child: const Text('Take a picture')),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  ElevatedButton(onPressed: upload, child: const Text('Start')),
-                ],
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Center(
-                child: _selectedimage == null
-                    ? const Text('try taking an image of the statue')
-                    : Column(
-                        children: [
-                          SizedBox(
-                              height: 200,
-                              width: double.infinity,
-                              child: GestureDetector(
-                                onTap: _takePicture,
-                                child: Image.file(
-                                  _selectedimage!,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  height: double.infinity,
+        appBar: AppBar(),
+        body: ListView(children: [
+          Container(
+            margin: const EdgeInsets.all(25),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
+                        onPressed: _takePicture,
+                        child: const Text('Take a picture')),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    ElevatedButton(
+                        onPressed: upload, child: const Text('Start')),
+                  ],
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Center(
+                    child: _selectedimage == null
+                        ? const Text('try taking an image of the statue')
+                        : Expanded(
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                    height: 200,
+                                    width: double.infinity,
+                                    child: GestureDetector(
+                                      onTap: _takePicture,
+                                      child: Image.file(
+                                        _selectedimage!,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                      ),
+                                    )),
+                                const SizedBox(
+                                  height: 5,
                                 ),
-                              )),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                name,
-                                style: const TextStyle(
-                                    fontSize: 17, fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(infoData),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          SizedBox(
-                            
-                            height: double.infinity,
-                            width: double.infinity,
-                            child: ListView.builder(
-                              
-                              shrinkWrap: true,
-                              itemCount: questionAnswerPairs.length,
-                              itemBuilder: (context, index) {
-                                final question = questionAnswerPairs[index][0];
-                                final answer = questionAnswerPairs[index][1];
-                                return Accordion(
-                                  
-                                    headerBackgroundColor: const Color.fromARGB(
-                                        255, 104, 131, 240),
-                                    paddingListTop: 0,
-                                    paddingListBottom: 0,
+                                Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      AccordionSection(
-                                          header: Center(
-                                              child: Text(
-                                            question,
-                                            style: const TextStyle(
-                                                fontSize: 17,
-                                                fontWeight: FontWeight.w700),
-                                          )),
-                                          content: Text(answer,
-                                              style: const TextStyle(
-                                                fontSize: 15,
-                                              )))
-                                    ]);
-                              },
+                                      Text(
+                                        name,
+                                        style: const TextStyle(
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(infoData),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: questionAnswerPairs.length,
+                                        itemBuilder: (context, index) {
+                                          final question =
+                                              questionAnswerPairs[index][0];
+                                          final answer =
+                                              questionAnswerPairs[index][1];
+                                          return Accordion(
+                                              headerBackgroundColor:
+                                                  const Color.fromARGB(
+                                                      255, 104, 131, 240),
+                                              paddingListTop: 0,
+                                              paddingListBottom: 0,
+                                              children: [
+                                                AccordionSection(
+                                                    header: Center(
+                                                        child: Text(
+                                                      question,
+                                                      style: const TextStyle(
+                                                          fontSize: 17,
+                                                          fontWeight:
+                                                              FontWeight.w700),
+                                                    )),
+                                                    content: Text(answer,
+                                                        style: const TextStyle(
+                                                          fontSize: 15,
+                                                        )))
+                                              ]);
+                                        },
+                                      ),
+                                    ]),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-              ),
-            ],
-          ),
-        ),
-      ]),
-    );
+                          ))
+              ],
+            ),
+          )
+        ]));
   }
 }
+
+// Column(
+//                             mainAxisAlignment: MainAxisAlignment.start,
+//                             children: [
+//                               Text(
+//                                 name,
+//                                 style: const TextStyle(
+//                                     fontSize: 17, fontWeight: FontWeight.bold),
+//                               ),
+//                             ],
+//                           ),
+//                           const SizedBox(
+//                             height: 10,
+//                           ),
+//                           Text(infoData),
+//                           const SizedBox(
+//                             height: 10,
+//                           ),
+//                           SizedBox(
+                            
+//                             height: double.infinity,
+//                             width: double.infinity,
+//                             child: ListView.builder(
+                              
+//                               shrinkWrap: true,
+//                               itemCount: questionAnswerPairs.length,
+//                               itemBuilder: (context, index) {
+//                                 final question = questionAnswerPairs[index][0];
+//                                 final answer = questionAnswerPairs[index][1];
+//                                 return Accordion(
+                                  
+//                                     headerBackgroundColor: const Color.fromARGB(
+//                                         255, 104, 131, 240),
+//                                     paddingListTop: 0,
+//                                     paddingListBottom: 0,
+//                                     children: [
+//                                       AccordionSection(
+//                                           header: Center(
+//                                               child: Text(
+//                                             question,
+//                                             style: const TextStyle(
+//                                                 fontSize: 17,
+//                                                 fontWeight: FontWeight.w700),
+//                                           )),
+//                                           content: Text(answer,
+//                                               style: const TextStyle(
+//                                                 fontSize: 15,
+//                                               )))
+//                                     ]);
+//                               },
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+

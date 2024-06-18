@@ -1,3 +1,5 @@
+import 'package:final5/screens/chat_screen.dart';
+import 'package:final5/screens/talk_to_me.dart';
 import 'package:final5/screens/test.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -42,7 +44,8 @@ class _ArchitectsDetailsState extends State<ArchitectsDetails> {
       });
     }
   }
-    void go(BuildContext context) {
+
+  void go(BuildContext context) {
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (ctx) => const Test()));
   }
@@ -60,111 +63,110 @@ class _ArchitectsDetailsState extends State<ArchitectsDetails> {
     if (errorMessage.isNotEmpty) {
       return Scaffold(
         body: Center(
-          child: Text(errorMessage),
+          child: Text('Error: $errorMessage'),
         ),
       );
     }
+
+    if (jsonResponse == null) {
+      return Scaffold(
+        body: Center(
+          child: Text('No data found'),
+        ),
+      );
+    }
+
+    // Extracting values with default fallbacks
+    String imageUrl = jsonResponse?['imageUrl'] ?? '';
+    String name = jsonResponse?['name'] ?? 'Unknown';
+    String description =
+        jsonResponse?['description'] ?? 'No description available';
+
     return Scaffold(
-        body: Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(jsonResponse!['imageUrlList'][0]),
-                fit: BoxFit.cover,
-                opacity: 0.7,
+      appBar: AppBar(),
+      body: Column(
+        children: [
+          const SizedBox(height: 35),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25),
+              child: ListView(
+                children: [
+                  Image.network(
+                    (jsonResponse!['imageUrlList'][0]),
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: 250,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Text('Image not available');
+                    },
+                  ),
+                  const SizedBox(height: 35),
+                  Text(
+                    name,
+                    style: const TextStyle(
+                        fontSize: 25, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    description,
+                    style: const TextStyle(height: 1.5, fontSize: 17),
+                  ),
+                ],
               ),
             ),
-            child: Scaffold(
-              backgroundColor: Colors.transparent,
-              appBar: PreferredSize(
-                  preferredSize: const Size.fromHeight(90),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15),
-                                boxShadow: const [
-                                  BoxShadow(color: Colors.white, blurRadius: 6)
-                                ]),
-                            child: const Icon(
-                              Icons.arrow_back,
-                              size: 28,
-                            ),
+          ),
+          Container(
+            color: const Color.fromARGB(255, 207, 148, 72),
+            padding: const EdgeInsets.all(25),
+            child: Column(
+              children: [
+                Row(
+                  // crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return const TalkToMe();
+                          }));
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromARGB(255, 6, 118, 28),
+                        ),
+                        child: const Text(
+                          'Talk To Me',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 248, 245, 245),
                           ),
                         ),
-                        Container(
-                  margin: const EdgeInsets.only(left: 16),
-                  padding: const EdgeInsets.all(3),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(13),
-                      boxShadow: const [
-                        BoxShadow(color: Colors.white, blurRadius: 6)
-                      ]),
-                  child: IconButton(
-                      icon: const Icon(Icons.camera),
-                      onPressed: () {
-                        go(context);
-                      })),
-            
-                      ],
-                    ),
-                  )),
-              bottomNavigationBar: Container(
-                height: MediaQuery.of(context).size.height / 1.8,
-                padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
-                decoration: const BoxDecoration(
-                    color: Color(0xFFEDF2F6),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(40),
-                      topRight: Radius.circular(40),
-                    )),
-                child: ListView(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                jsonResponse!['name'],
-                                style: const TextStyle(
-                                    fontSize: 23, fontWeight: FontWeight.w600),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 25,
-                          ),
-                          Text(
-                            jsonResponse!['description'],
-                            style: const TextStyle(
-                                color: Colors.black54, fontSize: 16),
-                            textAlign: TextAlign.justify,
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          
-                        ],
                       ),
-                    )
+                    ),
+                    ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (ctx) => ChatScreen()));
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Color.fromARGB(255, 195, 19, 186),
+                        ),
+                        child:const Text("chat with me",style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 248, 245, 245),
+                          ),))
                   ],
                 ),
-              ),
-             
-            )));
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
-      

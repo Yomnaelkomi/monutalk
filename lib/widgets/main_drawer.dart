@@ -38,6 +38,16 @@ class MainDrawer extends StatelessWidget {
         ),
         ListTile(
           leading:const Icon(
+            Icons.account_box,
+            size: 26,
+          ),
+          title:const Text('My Account'),
+          onTap: () {
+            onSelectscreen('My Account');
+          },
+        ),
+        ListTile(
+          leading:const Icon(
             Icons.home,
             size: 26,
           ),
@@ -74,6 +84,36 @@ class MainDrawer extends StatelessWidget {
           title:const Text('About Us'),
           onTap: () {
             onSelectscreen('About Us');
+          },
+        ),
+        ListTile(
+          leading:const Icon(
+            Icons.tab,
+            size: 26,
+          ),
+          title:const Text('My tickets'),
+          onTap: () {
+            onSelectscreen('My tickets');
+          },
+        ),
+        ListTile(
+          leading:const Icon(
+            Icons.camera,
+            size: 26,
+          ),
+          title:const Text('Camera'),
+          onTap: () {
+            onSelectscreen('Camera');
+          },
+        ),
+        ListTile(
+          leading:const Icon(
+            Icons.recommend,
+            size: 26,
+          ),
+          title:const Text('Recommendations'),
+          onTap: () {
+            onSelectscreen('Recommendations');
           },
         ),
       ]),
