@@ -1,35 +1,31 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'dart:convert';
-import 'dart:io';
 
 class MyAccountPage extends StatefulWidget {
-  const MyAccountPage({super.key, required this.UID});
+  const MyAccountPage({Key? key, required this.UID}) : super(key: key);
   final String UID;
 
   @override
-  State<MyAccountPage> createState() {
-    return _MyAccountPageState();
-  }
+  State<MyAccountPage> createState() => _MyAccountPageState();
 }
 
 class _MyAccountPageState extends State<MyAccountPage> {
   bool isLoading = true;
   String errorMessage = '';
-  var jsonResponse;
+  Map<String, dynamic>? jsonResponse;
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
-  bool isEditingFirstName = false;
-  bool isEditingLastName = false;
-  File? _imageFile;
-
-  // Password change fields
-  bool isChangingPassword = false;
-  final TextEditingController newPasswordController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  bool isEditingFirstName = false;
+  bool isEditingLastName = false;
+  bool isChangingPassword = false;
+  File? _imageFile;
 
   @override
   void initState() {
@@ -45,8 +41,8 @@ class _MyAccountPageState extends State<MyAccountPage> {
       if (response.statusCode == 200) {
         setState(() {
           jsonResponse = json.decode(response.body);
-          firstNameController.text = jsonResponse['firstName'] ?? '';
-          lastNameController.text = jsonResponse['lastName'] ?? '';
+          firstNameController.text = jsonResponse?['firstName'] ?? '';
+          lastNameController.text = jsonResponse?['lastName'] ?? '';
           isLoading = false;
         });
         print(jsonResponse);
@@ -83,14 +79,13 @@ class _MyAccountPageState extends State<MyAccountPage> {
         body: json.encode(updatedFields),
       );
       if (response.statusCode == 200) {
+        final updatedData = json.decode(response.body);
         setState(() {
-          jsonResponse = json.decode(response.body);
-          // Update the controllers with new data from the response
-          firstNameController.text = jsonResponse['firstName'] ?? '';
-          lastNameController.text = jsonResponse['lastName'] ?? '';
+          jsonResponse?['firstName'] = updatedData['firstName'];
+          jsonResponse?['lastName'] = updatedData['lastName'];
+          isLoading = false;
           isEditingFirstName = false;
           isEditingLastName = false;
-          isLoading = false;
         });
         print(jsonResponse);
       } else {
@@ -104,63 +99,17 @@ class _MyAccountPageState extends State<MyAccountPage> {
     }
   }
 
-  Future<void> _pickImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
-      _uploadImage();
-    }
-  }
-
-  Future<void> _uploadImage() async {
-    if (_imageFile == null) return;
-
-    setState(() {
-      isLoading = true;
-    });
-
-    final uri = Uri.parse(
-        'https://monu-talk-production.up.railway.app/auth/update-image/${widget.UID}');
-    final request = http.MultipartRequest('PATCH', uri)
-      ..files.add(await http.MultipartFile.fromPath('image', _imageFile!.path));
-
-    try {
-      final streamedResponse = await request.send();
-      final response = await http.Response.fromStream(streamedResponse);
-
-      if (response.statusCode == 200) {
-        setState(() {
-          jsonResponse = json.decode(response.body);
-          isLoading = false;
-        });
-        print(jsonResponse);
-      } else {
-        throw Exception('Failed to upload image');
-      }
-    } catch (e) {
-      setState(() {
-        errorMessage = e.toString();
-        isLoading = false;
-      });
-    }
-  }
-
-  // Toggle password change fields
-  void changePassword() {
+  Future<void> changePassword() async {
     setState(() {
       isChangingPassword = !isChangingPassword;
-      newPasswordController.clear();
+      passwordController.clear();
       confirmPasswordController.clear();
       errorMessage = ''; // Clear any previous error message
     });
   }
 
-  // Submit new password
   Future<void> submitChangePassword() async {
-    final newPassword = newPasswordController.text.trim();
+    final newPassword = passwordController.text.trim();
     final confirmPassword = confirmPasswordController.text.trim();
 
     if (newPassword.length < 6) {
@@ -196,7 +145,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
       if (response.statusCode == 200) {
         setState(() {
           isLoading = false;
-          newPasswordController.clear(); // Clear the password fields after successful update
+          passwordController.clear(); // Clear the password fields after successful update
           confirmPasswordController.clear();
           isChangingPassword = false;
           // Optionally, you can update the UI or display a success message
@@ -213,6 +162,50 @@ class _MyAccountPageState extends State<MyAccountPage> {
     }
   }
 
+  Future<void> _pickImage() async {
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+      _uploadImage();
+    }
+  }
+
+  Future<void> _uploadImage() async {
+    if (_imageFile == null) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
+    final uri = Uri.parse(
+        'https://monu-talk-production.up.railway.app/auth/update-image/${widget.UID}');
+    final request = http.MultipartRequest('PATCH', uri)
+      ..files.add(await http.MultipartFile.fromPath('image', _imageFile!.path));
+
+    try {
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200) {
+        final updatedData = json.decode(response.body);
+        setState(() {
+          jsonResponse?['imageUrl'] = updatedData['imageUrl'];
+          isLoading = false;
+        });
+        print(jsonResponse);
+      } else {
+        throw Exception('Failed to upload image');
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = e.toString();
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     dynamic imageUrl = jsonResponse?['imageUrl'];
@@ -222,134 +215,136 @@ class _MyAccountPageState extends State<MyAccountPage> {
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : errorMessage.isNotEmpty
-              ? Center(child: Text(errorMessage))
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 40),
-                      Stack(
-                        children: [
-                          CircleAvatar(
-                            radius: 70,
-                            backgroundImage: _imageFile != null
-                                ? FileImage(_imageFile!)
-                                : (imageUrl != null && imageUrl.isNotEmpty
-                                    ? NetworkImage(imageUrl)
-                                    : const AssetImage('assets/images/contactImage.png')) as ImageProvider,
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: IconButton(
-                              icon:const Icon(Icons.edit, color: Color.fromARGB(255, 233, 227, 227), size: 30),
-                              onPressed: _pickImage,
-                              color: Colors.deepOrange,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      itemProfile(
-                        'First Name', 
-                        jsonResponse?['firstName'] ?? '', 
-                        CupertinoIcons.person,
-                        firstNameController,
-                        isEditingFirstName,
-                        () {
-                          setState(() {
-                            isEditingFirstName = !isEditingFirstName;
-                          });
-                        }
-                      ),
-                      const SizedBox(height: 10),
-                      itemProfile(
-                        'Last Name', 
-                        jsonResponse?['lastName'] ?? '', 
-                        CupertinoIcons.person,
-                        lastNameController,
-                        isEditingLastName,
-                        () {
-                          setState(() {
-                            isEditingLastName = !isEditingLastName;
-                          });
-                        }
-                      ),
-                      const SizedBox(height: 20),
-                      if (isEditingFirstName || isEditingLastName)
-                        ElevatedButton(
-                          onPressed: updateUser,
-                          child: const Text('Update'),
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 20),
+                  Center(
+                    child: Stack(
+                      alignment: Alignment.bottomRight,
+                      children: [
+                        CircleAvatar(
+                          radius: 70,
+                          backgroundImage: imageUrl != null && imageUrl.isNotEmpty
+                              ? NetworkImage(imageUrl)
+                              : const AssetImage('assets/images/contactImage.png')
+                                  as ImageProvider,
                         ),
-                      const SizedBox(height: 10),
-                      itemProfile(
-                        'Email', 
-                        jsonResponse['email'], 
-                        CupertinoIcons.mail,
-                        null,
-                        false,
-                        null,
-                      ),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: changePassword,
-                        child: const Text('Change Password'),
-                      ),
-                      if (isChangingPassword) ...[
-                        const SizedBox(height: 10),
-                        TextField(
-                          controller: newPasswordController,
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            hintText: 'Enter new password (min. 6 characters)',
-                            errorText: errorMessage.isNotEmpty ? errorMessage : null,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        TextField(
-                          controller: confirmPasswordController,
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            hintText: 'Confirm new password',
-                            errorText: errorMessage.isNotEmpty ? errorMessage : null,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        ElevatedButton(
-                          onPressed: submitChangePassword,
-                          child: const Text('Submit'),
+                        IconButton(
+                          icon: const Icon(Icons.edit),
+                          onPressed: _pickImage,
+                          color: Colors.deepOrange,
                         ),
                       ],
-                    ],
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 20),
+                  itemProfile(
+                    'First Name',
+                    jsonResponse?['firstName'] ?? '',
+                    CupertinoIcons.person,
+                    firstNameController,
+                    isEditingFirstName,
+                    () {
+                      setState(() {
+                        isEditingFirstName = !isEditingFirstName;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  itemProfile(
+                    'Last Name',
+                    jsonResponse?['lastName'] ?? '',
+                    CupertinoIcons.person,
+                    lastNameController,
+                    isEditingLastName,
+                    () {
+                      setState(() {
+                        isEditingLastName = !isEditingLastName;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  if (isEditingFirstName || isEditingLastName) ...[
+                    ElevatedButton(
+                      onPressed: updateUser,
+                      child: const Text('Update'),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                  // Email Section
+                  itemProfile(
+                    'Email',
+                    jsonResponse?['email'] ?? '', // Display email from jsonResponse
+                    CupertinoIcons.mail,
+                    null, // Pass null for email as it's not editable
+                    false,
+                    null,
+                  ),
+                  const SizedBox(height: 20),
+                  // Change Password Section
+                  ElevatedButton(
+                    onPressed: changePassword,
+                    child: const Text('Change Password'),
+                  ),
+                  if (isChangingPassword) ...[
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: passwordController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        hintText: 'Enter new password (min. 6 characters)',
+                        errorText: errorMessage.isNotEmpty ? errorMessage : null,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: confirmPasswordController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        hintText: 'Confirm new password',
+                        errorText: errorMessage.isNotEmpty ? errorMessage : null,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: submitChangePassword,
+                      child: const Text('Submit'),
+                    ),
+                  ],
+                ],
+              ),
+            ),
     );
   }
 
-
   Widget itemProfile(
-      String title,
-      String subtitle,
-      IconData iconData,
-      TextEditingController? controller,
-      bool isEditing,
-      VoidCallback? onEdit) {
+    String title,
+    String subtitle,
+    IconData iconData,
+    TextEditingController? controller, // Make controller nullable
+    bool isEditing,
+    VoidCallback? onEdit, // Make onEdit nullable
+  ) {
     return Container(
       decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-                offset: Offset(0, 5),
-                color: Colors.deepOrange.withOpacity(.2),
-                spreadRadius: 2,
-                blurRadius: 10)
-          ]),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            offset: const Offset(0, 5),
+            color: Colors.deepOrange.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 10,
+          ),
+        ],
+      ),
       child: ListTile(
         title: Text(title),
-        subtitle: isEditing
-            ? TextFormField(
+        subtitle: controller != null && isEditing
+            ? TextField(
                 controller: controller,
                 decoration: InputDecoration(
                   hintText: 'Enter $title',
