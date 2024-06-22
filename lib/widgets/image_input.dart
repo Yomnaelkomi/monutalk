@@ -24,12 +24,6 @@ class _ImageInputState extends State<ImageInput> {
   String infoData = '';
   String name = '';
   List<List<String>> questionAnswerPairs = [];
-  // List<dynamic> questions = [];
-  // late List<Question> ques;
-  // late Question quest;
-  // Map<String, dynamic>? questionss;
-  // String q = '';
-  // String A = '';
 
   void _takePicture() async {
     name = '';
@@ -63,18 +57,19 @@ class _ImageInputState extends State<ImageInput> {
       )
     });
     Dio()
-        .post('https://84b2-34-83-172-215.ngrok-free.app/upload',
+        .post('https://2d0f-34-74-18-147.ngrok-free.app/upload',
             data: formData)
         .then((response) {
       var jsonResponse = jsonDecode(response.toString());
       print("Json Response: $jsonResponse");
+
 
       setState(() {
         List<dynamic> questionsData = jsonResponse['questions'];
 
         infoData = jsonResponse['info'];
         name = jsonResponse['name'];
-        questionAnswerPairs = []; // Clear previous data
+        questionAnswerPairs = [];
 
         for (var questionData in questionsData) {
           String question = questionData['question'];
@@ -83,22 +78,6 @@ class _ImageInputState extends State<ImageInput> {
         }
       });
       print('questionsAnswerPairs $questionAnswerPairs');
-
-      // print('questionsq $questions');
-      // var details = {'Usrname': q, 'Password': A};
-      // print('D $details');
-
-      // print('q $q');
-      // print('A $A');
-
-      // print('info ${res.info}');
-      // print("name $name");
-      // questions = jsonResponse['questions'];
-      //  print('QQ $questionss');
-      // print('1)Q&A ${questions[0]}');
-      // print('Ques: ${jsonResponse['questions'][0]['question']}');
-      // print('Answer: ${jsonResponse['questions'][0]['answer']}');
-      //  print('Length of ques ${questions.length}');
     }).catchError((error) => print("Error: $error"));
   }
 
@@ -129,75 +108,77 @@ class _ImageInputState extends State<ImageInput> {
                 ),
                 Center(
                     child: _selectedimage == null
-                        ? const Text('try taking an image of the statue')
-                        : Expanded(
-                            child: Column(
-                              children: [
-                                SizedBox(
-                                    height: 200,
-                                    width: double.infinity,
-                                    child: GestureDetector(
-                                      onTap: _takePicture,
-                                      child: Image.file(
-                                        _selectedimage!,
-                                        fit: BoxFit.cover,
-                                        width: double.infinity,
-                                        height: double.infinity,
-                                      ),
-                                    )),
-                                const SizedBox(
-                                  height: 5,
+                        ? const Text('Try taking an image of the statue')
+                        : Column(
+                            children: [
+                              Container(
+                                height: 300, // Fixed height
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    width: 1,
+                                    color: Colors.grey,
+                                  ),
                                 ),
-                                Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        name,
-                                        style: const TextStyle(
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(infoData),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      ListView.builder(
-                                        shrinkWrap: true,
-                                        itemCount: questionAnswerPairs.length,
-                                        itemBuilder: (context, index) {
-                                          final question =
-                                              questionAnswerPairs[index][0];
-                                          final answer =
-                                              questionAnswerPairs[index][1];
-                                          return Accordion(
-                                              headerBackgroundColor:
-                                                  const Color.fromARGB(
-                                                      255, 104, 131, 240),
-                                              paddingListTop: 0,
-                                              paddingListBottom: 0,
-                                              children: [
-                                                AccordionSection(
-                                                    header: Center(
-                                                        child: Text(
-                                                      question,
+                                child: Image.file(
+                                  _selectedimage!,
+                                  fit: BoxFit.contain, // Preserve aspect ratio
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      name,
+                                      style: const TextStyle(
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(infoData),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: questionAnswerPairs.length,
+                                      itemBuilder: (context, index) {
+                                        final question =
+                                            questionAnswerPairs[index][0];
+                                        final answer =
+                                            questionAnswerPairs[index][1];
+                                        return Accordion(
+                                            headerBackgroundColor:
+                                                const Color.fromARGB(
+                                                    255, 104, 131, 240),
+                                            paddingListTop: 0,
+                                            paddingListBottom: 0,
+                                            children: [
+                                              AccordionSection(
+                                                  header: Center(
+                                                      child: Text(
+                                                    question,
+                                                    style: const TextStyle(
+                                                        fontSize: 17,
+                                                        fontWeight:
+                                                            FontWeight.w700),
+                                                  )),
+                                                  content: Text(answer,
                                                       style: const TextStyle(
-                                                          fontSize: 17,
-                                                          fontWeight:
-                                                              FontWeight.w700),
-                                                    )),
-                                                    content: Text(answer,
-                                                        style: const TextStyle(
-                                                          fontSize: 15,
-                                                        )))
-                                              ]);
-                                        },
-                                      ),
-                                    ]),
-                              ],
-                            ),
+                                                        fontSize: 15,
+                                                      )))
+                                            ]);
+                                      },
+                                    ),
+                                  ]),
+                            ],
                           ))
               ],
             ),
@@ -205,58 +186,3 @@ class _ImageInputState extends State<ImageInput> {
         ]));
   }
 }
-
-// Column(
-//                             mainAxisAlignment: MainAxisAlignment.start,
-//                             children: [
-//                               Text(
-//                                 name,
-//                                 style: const TextStyle(
-//                                     fontSize: 17, fontWeight: FontWeight.bold),
-//                               ),
-//                             ],
-//                           ),
-//                           const SizedBox(
-//                             height: 10,
-//                           ),
-//                           Text(infoData),
-//                           const SizedBox(
-//                             height: 10,
-//                           ),
-//                           SizedBox(
-                            
-//                             height: double.infinity,
-//                             width: double.infinity,
-//                             child: ListView.builder(
-                              
-//                               shrinkWrap: true,
-//                               itemCount: questionAnswerPairs.length,
-//                               itemBuilder: (context, index) {
-//                                 final question = questionAnswerPairs[index][0];
-//                                 final answer = questionAnswerPairs[index][1];
-//                                 return Accordion(
-                                  
-//                                     headerBackgroundColor: const Color.fromARGB(
-//                                         255, 104, 131, 240),
-//                                     paddingListTop: 0,
-//                                     paddingListBottom: 0,
-//                                     children: [
-//                                       AccordionSection(
-//                                           header: Center(
-//                                               child: Text(
-//                                             question,
-//                                             style: const TextStyle(
-//                                                 fontSize: 17,
-//                                                 fontWeight: FontWeight.w700),
-//                                           )),
-//                                           content: Text(answer,
-//                                               style: const TextStyle(
-//                                                 fontSize: 15,
-//                                               )))
-//                                     ]);
-//                               },
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-

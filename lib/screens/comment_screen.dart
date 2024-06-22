@@ -16,45 +16,81 @@ class CommentScreen extends StatefulWidget {
 
 class _CommentScreenState extends State<CommentScreen> {
   final _formKey = GlobalKey<FormState>();
-  var _rating=2.0;
-  var _comment;
+  double _rating = 2.0;
+  late String _comment;
   bool isLoading = true;
   String errorMessage = '';
+
+  Future<void> _sendPredictionRequest() async {
+    final Map<String, dynamic> requestBody = {
+      "review": [_comment]
+    };
+    final url = Uri.parse('https://2d0f-34-74-18-147.ngrok-free.app/predict');
+    try {
+      var response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      _rating = responseBody['rating'].toDouble(); // Ensure the rating is a double
+      print('_comment $_comment ');
+      print('rating $_rating ');
+      return;
+    } catch (e) {
+      print('Error: $e');
+      throw Exception('Failed to get prediction');
+    }
+  }
+
+  Future<void> _submitReview() async {
+    final urlNodejs = Uri.https('monu-talk-production.up.railway.app', '/reviews');
+    try {
+      var response = await http.post(
+        urlNodejs,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(
+          {
+            'comment': _comment,
+            'rating': _rating,
+            'museumId': widget.MusuemId.toString(),
+            'userId': widget.UID,
+          },
+        ),
+      );
+      print("Response1: ${response.body}");
+    } catch (e) {
+      print('Error: $e');
+      throw Exception('Failed to submit review');
+    }
+  }
 
   void _saveItem() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      final url = Uri.https(
-          'monu-talk-production.up.railway.app', // Authority
-          '/reviews');
       try {
-        var response = await http.post(
-          url,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: json.encode(
-            {
-              'comment': _comment,
-              'rating': _rating,
-              'museumId': widget.MusuemId.toString(),
-              'userId': widget.UID,
-            },
+        await _sendPredictionRequest();
+        await _submitReview();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Comment submitted successfully'),
           ),
         );
-        print('commmentttt${jsonDecode(response.body)}');
-        print('statusssss${response.statusCode}');
+        Navigator.of(context).pop();
       } catch (e) {
-        print('eeeeeeeee$e');
+        print('Error: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to submit comment'),
+          ),
+        );
       }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('comment done succesfully'),
-        ),
-      );
     }
-    Navigator.of(context).pop();
   }
 
   @override
@@ -72,7 +108,7 @@ class _CommentScreenState extends State<CommentScreen> {
               TextFormField(
                 maxLength: 50,
                 decoration: const InputDecoration(
-                  label: Text('comment'),
+                  label: Text('Comment'),
                 ),
                 validator: (value) {
                   if (value == null ||
@@ -84,9 +120,6 @@ class _CommentScreenState extends State<CommentScreen> {
                   return null;
                 },
                 onSaved: (value) {
-                  // if (value == null) {
-                  //   return;
-                  // }
                   _comment = value!;
                 },
               ),
@@ -95,27 +128,9 @@ class _CommentScreenState extends State<CommentScreen> {
               ),
               Container(
                 margin: const EdgeInsets.only(bottom: 8),
-                child: Row(
-                  children: [
-                    RatingBar.builder(
-                      initialRating: 1,
-                      itemSize: 28,
-                      minRating: 1,
-                      direction: Axis.horizontal,
-                      allowHalfRating: true,
-                      itemCount: 5,
-                      updateOnDrag: true,
-                      itemPadding: const EdgeInsets.symmetric(horizontal: 4),
-                      itemBuilder: (context, _) => const Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                      ),
-                      onRatingUpdate: (rating) {
-                        _rating = rating;
-                      },
-                    ),
-                    const SizedBox(width: 30),
-                    Row(
+                
+                  
+                   child:  Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         TextButton(
@@ -130,11 +145,11 @@ class _CommentScreenState extends State<CommentScreen> {
                         ),
                       ],
                     ),
-                  ],
+            )],
                 ),
               ),
-            ]),
+            ),
           ),
-        )));
+        );
   }
 }

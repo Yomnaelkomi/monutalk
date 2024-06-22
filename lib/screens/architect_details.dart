@@ -92,14 +92,20 @@ class _ArchitectsDetailsState extends State<ArchitectsDetails> {
               padding: const EdgeInsets.symmetric(horizontal: 25),
               child: ListView(
                 children: [
-                  Image.network(
-                    (jsonResponse!['imageUrlList'][0]),
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: 250,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Text('Image not available');
-                    },
+                  Container(
+                    height: 250, // Set a fixed height for the image container
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                    ),
+                    child: Image.network(
+                      jsonResponse!['imageUrlList'][0],
+                      fit: BoxFit.contain, // Ensure the image fits within the container without cropping
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Center(
+                          child: Text('Image not available'),
+                        );
+                      },
+                    ),
                   ),
                   const SizedBox(height: 35),
                   Text(
@@ -122,7 +128,6 @@ class _ArchitectsDetailsState extends State<ArchitectsDetails> {
             child: Column(
               children: [
                 Row(
-                  // crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(
                       child: ElevatedButton(
@@ -154,12 +159,15 @@ class _ArchitectsDetailsState extends State<ArchitectsDetails> {
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
-                              Color.fromARGB(255, 195, 19, 186),
+                              const Color.fromARGB(255, 195, 19, 186),
                         ),
-                        child:const Text("chat with me",style: TextStyle(
+                        child: const Text(
+                          "Chat With Me",
+                          style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Color.fromARGB(255, 248, 245, 245),
-                          ),))
+                          ),
+                        )),
                   ],
                 ),
               ],

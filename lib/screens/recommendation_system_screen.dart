@@ -89,20 +89,30 @@ class _RecommendationSystemScreenState
                   );
                 } else if (snapshot.hasData) {
                   var data = snapshot.data!;
-                  return DropdownButton<String>(
-                    value: dropdownvalue ?? data[0],
-                    icon: const Icon(Icons.keyboard_arrow_down),
-                    items: data.map((String items) {
-                      return DropdownMenuItem<String>(
-                        value: items,
-                        child: Text(items),
+                  return LayoutBuilder(
+                    builder: (context, constraints) {
+                      return ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: constraints.maxWidth,
+                        ),
+                        child: DropdownButton<String>(
+                          isExpanded: true,
+                          value: dropdownvalue ?? data[0],
+                          icon: const Icon(Icons.keyboard_arrow_down),
+                          items: data.map((String items) {
+                            return DropdownMenuItem<String>(
+                              value: items,
+                              child: Text(items),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              dropdownvalue = newValue!;
+                            });
+                            _saveItem();
+                          },
+                        ),
                       );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        dropdownvalue = newValue!;
-                      });
-                      _saveItem();
                     },
                   );
                 } else {
@@ -113,9 +123,10 @@ class _RecommendationSystemScreenState
             const SizedBox(height: 20),
             if (jsonResponse != null)
               Expanded(
-                child: ListView(
-                  children: [
-                    Card(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Card(
                         margin: const EdgeInsets.symmetric(vertical: 8.0),
                         elevation: 5,
                         child: Padding(
@@ -153,54 +164,57 @@ class _RecommendationSystemScreenState
                           ),
                         ),
                       ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      "Recommended museums based on your choice",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                    ),
-                    const SizedBox(height: 10),
-                    ...jsonResponse!['museums'].map<Widget>((museum) {
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8.0),
-                        elevation: 5,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                museum['name'],
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Category: ${museum['category']}',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontStyle: FontStyle.italic,
-                                  color: Colors.grey[700],
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Description: ${museum['description']}',
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Location: ${museum['location']}',
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                            ],
-                          ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        "Recommended museums based on your choice",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
                         ),
-                      );
-                    }).toList(),
-                  ],
+                      ),
+                      const SizedBox(height: 10),
+                      ...jsonResponse!['museums'].map<Widget>((museum) {
+                        return Card(
+                          margin: const EdgeInsets.symmetric(vertical: 8.0),
+                          elevation: 5,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  museum['name'],
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Category: ${museum['category']}',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontStyle: FontStyle.italic,
+                                    color: Colors.grey[700],
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Description: ${museum['description']}',
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Location: ${museum['location']}',
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ],
+                  ),
                 ),
               ),
           ],

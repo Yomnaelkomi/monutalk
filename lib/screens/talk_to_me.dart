@@ -23,8 +23,8 @@ class _TalkToMeState extends State<TalkToMe> {
   Timer? _imageChangeTimer;
   int _currentImageIndex = 0;
   final List<String> _images = [
-    'assets/images/character1.jpeg',
-    'assets/images/character2.jpeg'
+    'assets/images/characteree2.jpg',
+    'assets/images/characteree1.jpg'
   ];
 
   final TextEditingController _textController = TextEditingController();
