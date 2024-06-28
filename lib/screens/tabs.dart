@@ -1,15 +1,14 @@
 import 'package:final5/screens/aboutUs.dart';
 import 'package:final5/screens/authentication_screen.dart';
 import 'package:final5/screens/categories.dart';
+import 'package:final5/screens/chat_screen.dart';
 import 'package:final5/screens/contactUs.dart';
 import 'package:final5/screens/home_screen2.dart';
 import 'package:final5/screens/my_account.dart';
-import 'package:final5/screens/my_purchases.dart';
 import 'package:final5/screens/recommendation_system_screen.dart';
+import 'package:final5/screens/talk_to_me.dart';
 import 'package:final5/screens/test.dart';
-import 'package:final5/screens/tickets.dart';
 import 'package:final5/screens/tickets2_screen.dart';
-import 'package:final5/widgets/image_input.dart';
 import 'package:final5/widgets/main_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -65,7 +64,7 @@ class _TabsScreenState extends State<TabsScreen> {
   void _setScreen(String identifier) async {
     
     Get.back();
-    if (identifier == 'home') {
+    if (identifier == 'HOME') {
       final result = await Navigator.of(context)
           .push(MaterialPageRoute(builder: (ctx) =>  TabsScreen(UID: widget.UID,)));
       print(result);
@@ -113,6 +112,16 @@ class _TabsScreenState extends State<TabsScreen> {
           .push(MaterialPageRoute(builder: (ctx) => RecommendationSystemScreen()));
       print(result);
     }
+    if (identifier == 'Talk to Me') {
+      final result = await Navigator.of(context)
+          .push(MaterialPageRoute(builder: (ctx) => TalkToMe()));
+      print(result);
+    }
+    if (identifier == 'Chat with Me') {
+      final result = await Navigator.of(context)
+          .push(MaterialPageRoute(builder: (ctx) => ChatScreen()));
+      print(result);
+    }
     
   }
 
@@ -136,7 +145,7 @@ class _TabsScreenState extends State<TabsScreen> {
               
             },
             child: const Text(
-              'logout',
+              'LOGOUT',
               style: TextStyle(color: Color.fromARGB(255, 2, 0, 0)),
             ))
       ]),

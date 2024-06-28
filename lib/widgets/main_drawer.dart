@@ -51,9 +51,9 @@ class MainDrawer extends StatelessWidget {
             Icons.home,
             size: 26,
           ),
-          title:const Text('home'),
+          title:const Text('HOME'),
           onTap: () {
-            onSelectscreen('home');
+            onSelectscreen('HOME');
           },
         ),
         ListTile(
@@ -114,6 +114,26 @@ class MainDrawer extends StatelessWidget {
           title:const Text('Recommendations'),
           onTap: () {
             onSelectscreen('Recommendations');
+          },
+        ),
+        ListTile(
+          leading:const Icon(
+            Icons.mic,
+            size: 26,
+          ),
+          title:const Text('Talk to Me'),
+          onTap: () {
+            onSelectscreen('Talk to Me');
+          },
+        ),
+        ListTile(
+          leading:const Icon(
+            Icons.chat_rounded,
+            size: 26,
+          ),
+          title:const Text('Chat with Me'),
+          onTap: () {
+            onSelectscreen('Chat with Me');
           },
         ),
       ]),

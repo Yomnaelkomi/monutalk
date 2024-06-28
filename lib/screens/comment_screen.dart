@@ -25,7 +25,7 @@ class _CommentScreenState extends State<CommentScreen> {
     final Map<String, dynamic> requestBody = {
       "review": [_comment]
     };
-    final url = Uri.parse('https://2d0f-34-74-18-147.ngrok-free.app/predict');
+    final url = Uri.parse('https://57b0-35-198-206-210.ngrok-free.app/predict');
     try {
       var response = await http.post(
         url,

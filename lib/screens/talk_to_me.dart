@@ -23,8 +23,8 @@ class _TalkToMeState extends State<TalkToMe> {
   Timer? _imageChangeTimer;
   int _currentImageIndex = 0;
   final List<String> _images = [
-    'assets/images/characteree2.jpg',
-    'assets/images/characteree1.jpg'
+    
+    'assets/images/animation_used.gif'
   ];
 
   final TextEditingController _textController = TextEditingController();
@@ -87,7 +87,8 @@ class _TalkToMeState extends State<TalkToMe> {
   Future<void> _sendTextAndPlayResponse() async {
     try {
       final response = await http.post(
-        Uri.parse('https://flask-server-monutalk-production.up.railway.app/chat'),
+        Uri.parse(
+            'https://flask-server-monutalk-production.up.railway.app/chat'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'text': _wordsSpoken}),
       );
@@ -101,7 +102,9 @@ class _TalkToMeState extends State<TalkToMe> {
         print('Server responded with status code: ${response.statusCode}');
         print('Server response: ${response.body}');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to get response from server: ${response.statusCode}')),
+          SnackBar(
+              content: Text(
+                  'Failed to get response from server: ${response.statusCode}')),
         );
       }
     } catch (e) {
@@ -118,7 +121,7 @@ class _TalkToMeState extends State<TalkToMe> {
     });
 
     print("Starting speaking animation.");
-    _imageChangeTimer = Timer.periodic(Duration(milliseconds: 500), (timer) {
+    _imageChangeTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
       setState(() {
         _currentImageIndex = (_currentImageIndex + 1) % _images.length;
       });
@@ -148,7 +151,7 @@ class _TalkToMeState extends State<TalkToMe> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 244, 171, 54),
+        backgroundColor:const Color.fromARGB(255, 244, 171, 54),
         title: const Text(
           'Talk with me',
           style: TextStyle(
@@ -189,12 +192,17 @@ class _TalkToMeState extends State<TalkToMe> {
             if (_isSpeaking)
               Padding(
                 padding: const EdgeInsets.all(16),
-                child: Image.asset(
-                  _images[_currentImageIndex],
-                  height: 150,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Text('Error loading image', style: TextStyle(fontSize: 20));
-                  },
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 600),
+                  child: Image.asset(
+                    _images[_currentImageIndex],
+                    key: ValueKey<int>(_currentImageIndex),
+                    height: 250,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Text('Error loading image',
+                          style: TextStyle(fontSize: 20));
+                    },
+                  ),
                 ),
               ),
             Padding(
@@ -213,11 +221,12 @@ class _TalkToMeState extends State<TalkToMe> {
       floatingActionButton: FloatingActionButton(
         onPressed: _speechToText.isListening ? _stopListening : _startListening,
         tooltip: 'Listen',
+         backgroundColor: const Color.fromARGB(255, 244, 171, 54),
         child: Icon(
           _speechToText.isNotListening ? Icons.mic_off : Icons.mic,
           color: Colors.white,
         ),
-        backgroundColor: const Color.fromARGB(255, 244, 171, 54),
+       
       ),
     );
   }

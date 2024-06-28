@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyAccountPage extends StatefulWidget {
   const MyAccountPage({Key? key, required this.UID}) : super(key: key);
@@ -30,6 +31,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
   @override
   void initState() {
     super.initState();
+    loadImageFromPreferences();
     fetchPost();
   }
 
@@ -168,7 +170,8 @@ class _MyAccountPageState extends State<MyAccountPage> {
       setState(() {
         _imageFile = File(pickedFile.path);
       });
-      _uploadImage();
+      await _uploadImage();
+      await saveImageToPreferences(pickedFile.path);
     }
   }
 
@@ -206,6 +209,21 @@ class _MyAccountPageState extends State<MyAccountPage> {
     }
   }
 
+  Future<void> saveImageToPreferences(String imagePath) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('imagePath', imagePath);
+  }
+
+  Future<void> loadImageFromPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    final imagePath = prefs.getString('imagePath');
+    if (imagePath != null) {
+      setState(() {
+        _imageFile = File(imagePath);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     dynamic imageUrl = jsonResponse?['imageUrl'];
@@ -227,10 +245,12 @@ class _MyAccountPageState extends State<MyAccountPage> {
                       children: [
                         CircleAvatar(
                           radius: 70,
-                          backgroundImage: imageUrl != null && imageUrl.isNotEmpty
-                              ? NetworkImage(imageUrl)
-                              : const AssetImage('assets/images/contactImage.png')
-                                  as ImageProvider,
+                          backgroundImage: _imageFile != null
+                              ? FileImage(_imageFile!)
+                              : (imageUrl != null && imageUrl.isNotEmpty
+                                  ? NetworkImage(imageUrl)
+                                  : const AssetImage('assets/images/contactImage.png')
+                                      as ImageProvider),
                         ),
                         IconButton(
                           icon: const Icon(Icons.edit),

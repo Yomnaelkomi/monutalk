@@ -122,59 +122,9 @@ class _ArchitectsDetailsState extends State<ArchitectsDetails> {
               ),
             ),
           ),
-          Container(
-            color: const Color.fromARGB(255, 207, 148, 72),
-            padding: const EdgeInsets.all(25),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return const TalkToMe();
-                          }));
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromARGB(255, 6, 118, 28),
-                        ),
-                        child: const Text(
-                          'Talk To Me',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 248, 245, 245),
-                          ),
-                        ),
-                      ),
-                    ),
-                    ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (ctx) => ChatScreen()));
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromARGB(255, 195, 19, 186),
-                        ),
-                        child: const Text(
-                          "Chat With Me",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 248, 245, 245),
-                          ),
-                        )),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+          
+          
+      ]),
     );
   }
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
+import 'package:url_launcher/url_launcher.dart';
 
 class RecommendationSystemScreen extends StatefulWidget {
   const RecommendationSystemScreen({Key? key}) : super(key: key);
@@ -62,6 +62,15 @@ class _RecommendationSystemScreenState
       }
     } catch (e) {
       print("Error: $e");
+    }
+  }
+
+  void _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
     }
   }
 
@@ -156,10 +165,20 @@ class _RecommendationSystemScreenState
                                 style: const TextStyle(fontSize: 14),
                               ),
                               const SizedBox(height: 8),
+                              Row(children: [
+                                
+                              const SizedBox(height: 8),
+                              IconButton(
+                                onPressed: () => _launchURL(jsonResponse!['museum']['locationUrl']),
+                                icon: Icon(Icons.location_on_rounded,color: Color.fromARGB(255, 8, 88, 154)),
+                              ),
                               Text(
                                 'Location: ${jsonResponse!['museum']['location']}',
                                 style: const TextStyle(fontSize: 14),
                               ),
+
+                              ],)
+                              
                             ],
                           ),
                         ),
@@ -204,10 +223,20 @@ class _RecommendationSystemScreenState
                                   style: const TextStyle(fontSize: 14),
                                 ),
                                 const SizedBox(height: 8),
+                                Row(children: [
+                                  
+                                const SizedBox(height: 8),
+                                IconButton(
+                                  onPressed: () => _launchURL(museum['locationUrl']),
+                                  icon:const Icon(Icons.location_on_rounded,color: Color.fromARGB(255, 8, 88, 154),),
+                                ),
                                 Text(
                                   'Location: ${museum['location']}',
                                   style: const TextStyle(fontSize: 14),
                                 ),
+
+                                ],)
+                                
                               ],
                             ),
                           ),

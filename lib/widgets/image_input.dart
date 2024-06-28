@@ -57,7 +57,7 @@ class _ImageInputState extends State<ImageInput> {
       )
     });
     Dio()
-        .post('https://2d0f-34-74-18-147.ngrok-free.app/upload',
+        .post('https://57b0-35-198-206-210.ngrok-free.app/upload',
             data: formData)
         .then((response) {
       var jsonResponse = jsonDecode(response.toString());

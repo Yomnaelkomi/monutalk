@@ -31,6 +31,9 @@ dependencies:
   ticket_widget: ^1.0.2
   transparent_image: ^2.0.1
   flutter_tts: ^3.8.3
+  url_launcher: ^6.1.6
+  gif: ^2.3.0
+  # flutter_gif: ^4.0.0
 
 dev_dependencies:
   flutter_test:
@@ -68,4 +71,34 @@ flutter:
       - assets/images/character1.jpeg
       - assets/images/characteree2.jpg
       - assets/images/characteree1.jpg
+      - assets/images/file1.png
+      - assets/images/file2.png
+      - assets/images/file3.png
+      - assets/images/file4.png
+      - assets/images/file5.png
+      - assets/images/file6.png
+      - assets/images/file7.png
+      - assets/images/file8.png
+      - assets/images/file9.png
+      - assets/images/file10.png
+      - assets/images/file11.png
+      - assets/images/file12.png
+      - assets/images/file13.png
+      - assets/images/file14.png
+      - assets/images/file15.png
+      - assets/images/file16.png
+      - assets/images/file17.png
+      - assets/images/file18.png
+      - assets/images/file19.png
+      - assets/images/file20.png
+      - assets/images/file21.png
+      - assets/images/file22.png
+      - assets/images/file23.png
+      - assets/images/file24.png
+      - assets/images/file25.png
+      - assets/images/file26.png
+      - assets/images/file27.png
+      - assets/images/file28.png
+      - assets/images/animation.gif
+      - assets/images/animation_used.gif
 
